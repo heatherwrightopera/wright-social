@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wright Social Media Tracker</title>
+<style>
+  :root {
+    --bg: #f7f6f3;
+    --card: #ffffff;
+    --ink: #1f2421;
+    --muted: #6b7280;
+    --line: #e3e1db;
+    --accent: #7a3b2e;
+    --accent-soft: #f0e6e2;
+    --done: #3d7a4f;
+    --done-soft: #e6f0e9;
+    --gcal: #1a73e8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+    font-size: 15px;
+  }
+  header {
+    background: var(--card);
+    border-bottom: 1px solid var(--line);
+    padding: 20px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  header h1 { margin: 0 0 2px; font-size: 20px; }
+  header .sub { color: var(--muted); font-size: 13px; }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 24px; }
+
+  /* Metrics */
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .metric {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .metric .label { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-bottom: 6px; }
+  .metric .row { display: flex; align-items: baseline; gap: 6px; }
+  .metric input {
+    width: 90px; font-size: 22px; font-weight: 600; border: none;
+    border-bottom: 2px solid var(--line); background: transparent; color: var(--ink);
+    padding: 2px 0; font-family: inherit;
+  }
+  .metric input:focus { outline: none; border-bottom-color: var(--accent); }
+  .metric .target { font-size: 13px; color: var(--muted); }
+  .metric .bar { height: 6px; background: var(--line); border-radius: 4px; margin-top: 10px; overflow: hidden; }
+  .metric .fill { height: 100%; background: var(--accent); border-radius: 4px; transition: width .3s; width: 0; }
+  .metric .fill.hit { background: var(--done); }
+  .metric .pct { font-size: 12px; color: var(--muted); margin-top: 5px; }
+
+  /* Controls */
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 20px; }
+  .filter {
+    border: 1px solid var(--line); background: var(--card); color: var(--ink);
+    padding: 6px 12px; border-radius: 20px; font-size: 13px; cursor: pointer; font-family: inherit;
+  }
+  .filter.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .overall { margin-left: auto; font-size: 13px; color: var(--muted); }
+  .overall b { color: var(--ink); }
+
+  /* Weeks */
+  .week { background: var(--card); border: 1px solid var(--line); border-radius: 10px; margin-bottom: 16px; overflow: hidden; }
+  .week-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px; cursor: pointer; user-select: none;
+    border-bottom: 1px solid transparent;
+  }
+  .week-head:hover { background: #faf9f7; }
+  .week.open .week-head { border-bottom-color: var(--line); }
+  .week-head .wk-title { font-weight: 600; }
+  .week-head .wk-title span { font-weight: 400; color: var(--muted); font-size: 13px; margin-left: 8px; }
+  .week-head .wk-prog { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+  .week-head .mini-bar { width: 60px; height: 5px; background: var(--line); border-radius: 3px; overflow: hidden; }
+  .week-head .mini-fill { height: 100%; background: var(--done); width: 0; transition: width .3s; }
+  .week-head .chev { color: var(--muted); transition: transform .2s; }
+  .week.open .chev { transform: rotate(90deg); }
+  .week-body { display: none; padding: 6px 0; }
+  .week.open .week-body { display: block; }
+
+  /* Task */
+  .task { display: flex; align-items: flex-start; gap: 12px; padding: 10px 16px; border-top: 1px solid #f2f0ec; }
+  .task:first-child { border-top: none; }
+  .task input[type=checkbox] { margin-top: 3px; width: 17px; height: 17px; cursor: pointer; flex-shrink: 0; accent-color: var(--done); }
+  .task .body { flex: 1; min-width: 0; }
+  .task .t-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .task .date { font-size: 12px; font-weight: 600; color: var(--accent); white-space: nowrap; }
+  .task .tag { font-size: 11px; padding: 1px 8px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); white-space: nowrap; }
+  .task .txt { margin-top: 2px; }
+  .task.done .txt { text-decoration: line-through; color: var(--muted); }
+  .task .gcal {
+    font-size: 12px; color: var(--gcal); text-decoration: none; white-space: nowrap;
+    border: 1px solid #d2e3fc; padding: 2px 8px; border-radius: 6px; margin-top: 4px; display: inline-block;
+  }
+  .task .gcal:hover { background: #f0f6ff; }
+  .note { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+  footer { max-width: 960px; margin: 0 auto; padding: 0 24px 40px; color: var(--muted); font-size: 13px; }
+  .reset { background: none; border: 1px solid var(--line); color: var(--muted); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-family: inherit; font-size: 12px; }
+  .flag { background: #fdf6e3; border: 1px solid #f0e4c0; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 13px; }
+  .flag b { color: var(--accent); }
+  .sync { font-size: 12px; padding: 3px 10px; border-radius: 12px; display: inline-block; margin-top: 6px; }
+  .sync.ok { background: var(--done-soft); color: var(--done); }
+  .sync.wait { background: #fff4e5; color: #a86b1f; }
+  .sync.warn { background: #fdecea; color: #b3261e; }
+  .sync.local { background: #eef2ff; color: #3949ab; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Wright Opera House — Social Media Tracker</h1>
+  <div class="sub">Jul 27 – Oct 25, 2026 &nbsp;·&nbsp; check items off, track metrics, drop dates into Google Calendar</div>
+  <span class="sync local" id="syncStatus">Local mode — not yet connected</span>
+</header>
+
+<div class="wrap">
+
+  <div class="metrics" id="metrics"></div>
+
+  <div class="flag">
+    <b>Two items still open:</b> Echoes in the Canyon screening date, and the wedding campaign booking goal. Fill those in and they'll slot into the timeline.
+  </div>
+
+  <div class="controls" id="controls"></div>
+
+  <div id="weeks"></div>
+
+</div>
+
+<footer>
+  <p>Your checkmarks and metric entries save automatically when you open this file on your own computer. <button class="reset" onclick="resetAll()">Reset all progress</button></p>
+</footer>
+
+<script>
+// ---------- METRIC DEFINITIONS ----------
+const METRICS = [
+  { id: 'likes',     label: 'Avg Likes / Post', start: 16, target: 25,   suffix: '', desc: 'toward 25' },
+  { id: 'shares',    label: 'Shares Gained',    start: 0,  target: 25,   suffix: '', desc: '+25 goal' },
+  { id: 'views',     label: 'Views (90-day)',   start: 36946, target: 47500, suffix: '', desc: 'toward ~47.5k' },
+  { id: 'followers', label: 'Followers',        start: 1877, target: 1957, suffix: '', desc: '+80 midpoint' },
+];
+
+// ---------- RECURRING DATE HELPERS ----------
+const START = new Date(2026, 6, 27); // Jul 27 2026 (Monday)
+const END   = new Date(2026, 9, 25); // Oct 25 2026 (Sunday)
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DOW = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+function fmt(d){ return DOW[d.getDay()] + ', ' + MONTHS[d.getMonth()] + ' ' + d.getDate(); }
+function gcalStr(d){ // YYYYMMDD
+  return d.getFullYear() + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0');
+}
+function gcalLink(d, title, details){
+  const start = gcalStr(d);
+  const end = new Date(d); end.setDate(end.getDate()+1);
+  const endStr = gcalStr(end);
+  const params = new URLSearchParams({
+    action: 'TEMPLATE', text: title, dates: start + '/' + endStr, details: details || ''
+  });
+  return 'https://calendar.google.com/calendar/render?' + params.toString();
+}
+function datesForDOW(dow){ // all dates of given day-of-week in range
+  const out = [];
+  let d = new Date(START);
+  while(d <= END){ if(d.getDay()===dow) out.push(new Date(d)); d.setDate(d.getDate()+1); }
+  return out;
+}
+function key(d){ return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
+
+// ---------- BUILD TASK LIST ----------
+let TASKS = [];
+let idc = 0;
+function add(dateObj, text, tag, note, gcal){
+  TASKS.push({
+    id: 'T'+(idc++),
+    date: dateObj,
+    sortKey: dateObj ? dateObj.getTime() : Infinity,
+    dateLabel: dateObj ? fmt(dateObj) : 'TBD',
+    text, tag, note: note||'',
+    gcal: (dateObj && gcal!==false) ? gcalLink(dateObj, text, note) : null
+  });
+}
+
+// Weekly: Wednesday movie night
+datesForDOW(3).forEach(d => add(d, 'Movie night reminder — post by 10am, cross-post to 2+ local FB groups', 'Weekly'));
+
+// Weekly: Thursday Letitia (alternating per plan)
+const letterDates = ['7-30','8-13','8-27','9-10','9-24','10-8','10-22'];
+datesForDOW(4).forEach(d => {
+  const k = (d.getMonth()+1)+'-'+d.getDate();
+  const isLetter = letterDates.includes(k);
+  add(d, 'Throwback Thursday — ' + (isLetter ? "Letitia's Letter (first-person historical voice)" : "Letitia's Voice (quote/story snippet)"), 'Weekly');
+});
+
+// Weekly: Sunday recap/gratitude (alternating)
+datesForDOW(0).forEach((d,i) => add(d, 'Sunday post — ' + (i%2===0 ? 'Recap: "what you missed this week"' : 'Gratitude post'), 'Weekly'));
+
+// Monthly: Tooting Our Own Horn (first Monday 9am)
+[[7,3],[8,7],[9,5]].forEach(([m,day]) => add(new Date(2026,m,day), 'Tooting Our Own Horn — text-only, 9am. Real Google review or Wright win, no photos', 'Monthly'));
+
+// Music Bingo B-roll
+add(new Date(2026,6,24), 'Music Bingo — Jake on-site for B-roll capture', 'Music Bingo', 'Cut into 1–2 short reels the following week');
+
+// Engagement Pod
+add(new Date(2026,6,27), 'Engagement Pod — recruit committee (Brooke, Beth/Chamber, Kate Jones, Sherbino, Alpenglow, school, Parks & Rec)', 'Eng. Pod');
+add(new Date(2026,7,3),  'Engagement Pod — shared posting schedule + Slack/text thread live', 'Eng. Pod');
+add(new Date(2026,8,25), 'Engagement Pod — pull reach/engagement data (boosted vs non-boosted); report at Aug board mtg', 'Eng. Pod');
+
+// LLL — daily-post week
+add(new Date(2026,6,27), "LLL — REHEARSAL SHOOT DAY 1: insults, physical comedy, character intro clips, battle-of-sexes setup", 'LLL', 'Main shoot window — capture everything Mon/Tue');
+add(new Date(2026,6,28), "LLL — REHEARSAL SHOOT DAY 2: finish capturing all reel/carousel footage", 'LLL');
+add(new Date(2026,6,29), 'LLL — "Battle of the sexes" teaser reel (day before opening)', 'LLL');
+add(new Date(2026,6,30), 'LLL — OPENING: "Swear off love, immediately fail" reel + opening-night Stories', 'LLL');
+add(new Date(2026,6,31), 'LLL — Shakespearean insults + modern translation carousel', 'LLL');
+add(new Date(2026,7,1),  'LLL — "Which character are you?" quiz carousel', 'LLL');
+add(new Date(2026,7,2),  'LLL — CLOSING: bloopers/rehearsal chaos reel + closing recap (doubles as Sunday recap)', 'LLL');
+
+// Edie — Aug 14
+add(new Date(2026,7,10), 'Edie — announce + ticket push (1–2 posts this week)', 'Edie / Pride', 'Cross-promote with Pride — Aug 14–15 is one "big weekend"');
+add(new Date(2026,7,13), 'Edie — countdown/teaser post (day before)', 'Edie / Pride');
+add(new Date(2026,7,14), 'Edie — ONE-NIGHT SHOWING: Story coverage during event', 'Edie / Pride');
+
+// Pride — Aug 15
+add(new Date(2026,7,15), 'Pride After-Party — Story coverage, live posting through event (connect Jake + Taylor for content)', 'Edie / Pride');
+add(new Date(2026,7,16), 'Pride/Edie — weekend recap post', 'Edie / Pride');
+
+// Echoes — TBD
+add(new Date(2026,6,27), 'Echoes in the Canyon — start local outreach for short interview clips (screening date TBD)', 'Echoes', 'Needs screening date to finish scheduling');
+
+// Sort
+TASKS.sort((a,b) => a.sortKey - b.sortKey);
+
+// ---------- STATE (localStorage w/ graceful fallback) ----------
+let state = { done: {}, metrics: {} };
+// ======================================================================
+//  SHARED SYNC — paste your Google Sheet Web App URL between the quotes
+//  below (see the setup guide). Leave it blank to run in local-only mode.
+// ======================================================================
+const SYNC_URL = "";
+// ======================================================================
+
+const syncOn = SYNC_URL.trim().length > 0;
+
+function setSync(txt, cls){
+  const el = document.getElementById('syncStatus');
+  if(el){ el.textContent = txt; el.className = 'sync ' + cls; }
+}
+
+async function load(){
+  if(syncOn){
+    setSync('Connecting…','wait');
+    try {
+      const res = await fetch(SYNC_URL, { method:'GET' });
+      const data = await res.json();
+      state = { done: (data&&data.done)||{}, metrics: (data&&data.metrics)||{} };
+      try { localStorage.setItem('wright_tracker', JSON.stringify(state)); } catch(e){}
+      setSync('Synced — shared with the team','ok');
+      return;
+    } catch(e){
+      setSync('Can\u2019t reach the shared sheet — using this device\u2019s copy','warn');
+    }
+  } else {
+    setSync('Local mode — checkmarks save on this device only','local');
+  }
+  try { const s = localStorage.getItem('wright_tracker'); if(s) state = JSON.parse(s); } catch(e){}
+}
+
+let saveTimer = null;
+function save(){
+  try { localStorage.setItem('wright_tracker', JSON.stringify(state)); } catch(e){}
+  if(!syncOn) return;
+  clearTimeout(saveTimer);
+  setSync('Saving…','wait');
+  saveTimer = setTimeout(async () => {
+    try {
+      await fetch(SYNC_URL, {
+        method:'POST',
+        headers:{ 'Content-Type':'text/plain;charset=utf-8' },
+        body: JSON.stringify(state)
+      });
+      setSync('Synced — shared with the team','ok');
+    } catch(e){
+      setSync('Save didn\u2019t reach the sheet — kept on this device','warn');
+    }
+  }, 500);
+}
+
+// Pick up teammates' changes every 20s (skips while someone is typing a metric)
+async function poll(){
+  if(!syncOn) return;
+  if(document.activeElement && document.activeElement.tagName === 'INPUT') return;
+  try {
+    const res = await fetch(SYNC_URL, { method:'GET' });
+    const data = await res.json();
+    const incoming = JSON.stringify({ done:(data&&data.done)||{}, metrics:(data&&data.metrics)||{} });
+    if(incoming !== JSON.stringify(state)){
+      state = JSON.parse(incoming);
+      try { localStorage.setItem('wright_tracker', JSON.stringify(state)); } catch(e){}
+      renderMetrics(); renderControls(); renderWeeks();
+      setSync('Synced — shared with the team','ok');
+    }
+  } catch(e){ /* stay quiet on background poll errors */ }
+}
+
+// ---------- GROUP INTO WEEKS ----------
+function weekStart(d){ const x = new Date(d); const day = x.getDay(); const diff = (day===0?-6:1-day); x.setDate(x.getDate()+diff); x.setHours(0,0,0,0); return x; }
+const weekMap = {};
+TASKS.forEach(t => {
+  if(!t.date){ (weekMap['TBD'] = weekMap['TBD']||[]).push(t); return; }
+  const ws = weekStart(t.date);
+  const k = ws.getTime();
+  (weekMap[k] = weekMap[k]||[]).push(t);
+});
+const weekKeys = Object.keys(weekMap).filter(k=>k!=='TBD').sort((a,b)=>a-b);
+
+// ---------- FILTERS ----------
+const TAGS = ['All','Weekly','Monthly','LLL','Edie / Pride','Eng. Pod','Music Bingo','Echoes'];
+let activeFilter = 'All';
+
+// ---------- RENDER ----------
+function renderMetrics(){
+  const el = document.getElementById('metrics');
+  el.innerHTML = '';
+  METRICS.forEach(m => {
+    const cur = state.metrics[m.id] !== undefined ? state.metrics[m.id] : m.start;
+    const range = m.target - m.start;
+    const prog = range === 0 ? 0 : ((cur - m.start) / range) * 100;
+    const clamped = Math.max(0, Math.min(100, prog));
+    const hit = cur >= m.target;
+    const div = document.createElement('div');
+    div.className = 'metric';
+    div.innerHTML = `
+      <div class="label">${m.label}</div>
+      <div class="row">
+        <input type="number" value="${cur}" data-m="${m.id}">
+        <span class="target">/ ${m.target.toLocaleString()}</span>
+      </div>
+      <div class="bar"><div class="fill ${hit?'hit':''}" style="width:${clamped}%"></div></div>
+      <div class="pct">${hit ? '✓ Target hit' : Math.round(clamped)+'% there · '+m.desc}</div>
+    `;
+    el.appendChild(div);
+  });
+  el.querySelectorAll('input').forEach(inp => {
+    inp.addEventListener('input', e => {
+      state.metrics[e.target.dataset.m] = parseFloat(e.target.value)||0;
+      save(); renderMetrics();
+    });
+  });
+}
+
+function renderControls(){
+  const el = document.getElementById('controls');
+  el.innerHTML = '';
+  TAGS.forEach(tag => {
+    const b = document.createElement('button');
+    b.className = 'filter' + (tag===activeFilter?' active':'');
+    b.textContent = tag;
+    b.onclick = () => { activeFilter = tag; renderControls(); renderWeeks(); };
+    el.appendChild(b);
+  });
+  const done = TASKS.filter(t=>state.done[t.id]).length;
+  const ov = document.createElement('div');
+  ov.className = 'overall';
+  ov.innerHTML = `<b>${done}</b> / ${TASKS.length} done overall`;
+  el.appendChild(ov);
+}
+
+function taskMatches(t){ return activeFilter==='All' || t.tag===activeFilter; }
+
+function renderWeeks(){
+  const container = document.getElementById('weeks');
+  container.innerHTML = '';
+  const allKeys = [...weekKeys];
+  if(weekMap['TBD']) allKeys.push('TBD');
+
+  allKeys.forEach((k, idx) => {
+    const tasks = weekMap[k].filter(taskMatches);
+    if(tasks.length === 0) return;
+
+    let title, sub;
+    if(k==='TBD'){ title = 'Undated'; sub = 'needs a date'; }
+    else {
+      const ws = new Date(parseInt(k));
+      const we = new Date(ws); we.setDate(we.getDate()+6);
+      title = 'Week of ' + MONTHS[ws.getMonth()] + ' ' + ws.getDate();
+      sub = MONTHS[ws.getMonth()]+' '+ws.getDate()+'–'+(we.getMonth()!==ws.getMonth()?MONTHS[we.getMonth()]+' ':'')+we.getDate();
+    }
+    const doneN = tasks.filter(t=>state.done[t.id]).length;
+    const pct = Math.round(doneN/tasks.length*100);
+
+    // auto-open current & first incomplete-ish; default open first 2
+    const today = new Date();
+    const isCurrent = k!=='TBD' && (()=>{ const ws=new Date(parseInt(k)); const we=new Date(ws); we.setDate(we.getDate()+7); return today>=ws && today<we; })();
+    const open = isCurrent || idx < 2;
+
+    const wk = document.createElement('div');
+    wk.className = 'week' + (open?' open':'');
+    wk.innerHTML = `
+      <div class="week-head">
+        <div class="wk-title">${title}<span>${sub}</span></div>
+        <div class="wk-prog">
+          ${doneN}/${tasks.length}
+          <div class="mini-bar"><div class="mini-fill" style="width:${pct}%"></div></div>
+          <span class="chev">▶</span>
+        </div>
+      </div>
+      <div class="week-body"></div>
+    `;
+    const head = wk.querySelector('.week-head');
+    head.onclick = () => wk.classList.toggle('open');
+    const body = wk.querySelector('.week-body');
+
+    tasks.forEach(t => {
+      const done = !!state.done[t.id];
+      const row = document.createElement('div');
+      row.className = 'task' + (done?' done':'');
+      row.innerHTML = `
+        <input type="checkbox" ${done?'checked':''} data-id="${t.id}">
+        <div class="body">
+          <div class="t-top">
+            <span class="date">${t.dateLabel}</span>
+            <span class="tag">${t.tag}</span>
+          </div>
+          <div class="txt">${t.text}</div>
+          ${t.note?`<div class="note">${t.note}</div>`:''}
+          ${t.gcal?`<a class="gcal" href="${t.gcal}" target="_blank" rel="noopener">+ Add to Google Calendar</a>`:''}
+        </div>
+      `;
+      row.querySelector('input').addEventListener('change', e => {
+        state.done[t.id] = e.target.checked;
+        save();
+        renderControls();
+        renderWeeks();
+      });
+      body.appendChild(row);
+    });
+    container.appendChild(wk);
+  });
+}
+
+function resetAll(){
+  if(confirm('Clear all checkmarks and metric entries?')){
+    state = { done:{}, metrics:{} };
+    save();
+    renderMetrics(); renderControls(); renderWeeks();
+  }
+}
+
+(async function init(){
+  await load();
+  renderMetrics();
+  renderControls();
+  renderWeeks();
+  if(syncOn) setInterval(poll, 20000);
+})();
+</script>
+</body>
+</html>
