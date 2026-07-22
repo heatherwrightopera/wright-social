@@ -6,58 +6,22 @@
 <title>Wright Social Media Tracker</title>
 <style>
   :root {
-    --bg: #f7f6f3;
-    --card: #ffffff;
-    --ink: #1f2421;
-    --muted: #6b7280;
-    --line: #e3e1db;
-    --accent: #7a3b2e;
-    --accent-soft: #f0e6e2;
-    --done: #3d7a4f;
-    --done-soft: #e6f0e9;
-    --gcal: #1a73e8;
+    --bg: #f7f6f3; --card: #ffffff; --ink: #1f2421; --muted: #6b7280;
+    --line: #e3e1db; --accent: #7a3b2e; --accent-soft: #f0e6e2;
+    --done: #3d7a4f; --done-soft: #e6f0e9; --gcal: #1a73e8;
   }
   * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background: var(--bg);
-    color: var(--ink);
-    line-height: 1.5;
-    font-size: 15px;
-  }
-  header {
-    background: var(--card);
-    border-bottom: 1px solid var(--line);
-    padding: 20px 24px;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-  }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.5; font-size: 15px; }
+  header { background: var(--card); border-bottom: 1px solid var(--line); padding: 20px 24px; position: sticky; top: 0; z-index: 10; }
   header h1 { margin: 0 0 2px; font-size: 20px; }
   header .sub { color: var(--muted); font-size: 13px; }
   .wrap { max-width: 960px; margin: 0 auto; padding: 24px; }
 
-  /* Metrics */
-  .metrics {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 14px;
-    margin-bottom: 28px;
-  }
-  .metric {
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    padding: 14px 16px;
-  }
+  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 28px; }
+  .metric { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
   .metric .label { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-bottom: 6px; }
   .metric .row { display: flex; align-items: baseline; gap: 6px; }
-  .metric input {
-    width: 90px; font-size: 22px; font-weight: 600; border: none;
-    border-bottom: 2px solid var(--line); background: transparent; color: var(--ink);
-    padding: 2px 0; font-family: inherit;
-  }
+  .metric input { width: 90px; font-size: 22px; font-weight: 600; border: none; border-bottom: 2px solid var(--line); background: transparent; color: var(--ink); padding: 2px 0; font-family: inherit; }
   .metric input:focus { outline: none; border-bottom-color: var(--accent); }
   .metric .target { font-size: 13px; color: var(--muted); }
   .metric .bar { height: 6px; background: var(--line); border-radius: 4px; margin-top: 10px; overflow: hidden; }
@@ -65,23 +29,30 @@
   .metric .fill.hit { background: var(--done); }
   .metric .pct { font-size: 12px; color: var(--muted); margin-top: 5px; }
 
-  /* Controls */
-  .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 20px; }
-  .filter {
-    border: 1px solid var(--line); background: var(--card); color: var(--ink);
-    padding: 6px 12px; border-radius: 20px; font-size: 13px; cursor: pointer; font-family: inherit;
-  }
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 16px; }
+  .filter { border: 1px solid var(--line); background: var(--card); color: var(--ink); padding: 6px 12px; border-radius: 20px; font-size: 13px; cursor: pointer; font-family: inherit; }
   .filter.active { background: var(--accent); color: #fff; border-color: var(--accent); }
   .overall { margin-left: auto; font-size: 13px; color: var(--muted); }
   .overall b { color: var(--ink); }
 
-  /* Weeks */
+  .addbtn { background: var(--accent); color:#fff; border:none; padding:8px 16px; border-radius: 8px; font-size:14px; font-family:inherit; cursor:pointer; margin-bottom:18px; }
+  .addbtn:hover { opacity:.92; }
+
+  /* Editor form */
+  .editor { background: var(--card); border: 1px solid var(--accent); border-radius: 10px; padding: 18px; margin-bottom: 20px; display:none; }
+  .editor.open { display:block; }
+  .editor h3 { margin:0 0 14px; font-size:15px; color:var(--accent); }
+  .editor .grid { display:grid; grid-template-columns: 140px 1fr; gap:10px 14px; align-items:center; }
+  .editor label { font-size:13px; color:var(--muted); }
+  .editor input, .editor textarea, .editor select { width:100%; font-family:inherit; font-size:14px; padding:8px 10px; border:1px solid var(--line); border-radius:6px; background:#fff; color:var(--ink); }
+  .editor textarea { resize:vertical; min-height:48px; }
+  .editor .actions { margin-top:16px; display:flex; gap:8px; }
+  .editor .save { background: var(--done); color:#fff; border:none; padding:8px 18px; border-radius:6px; font-family:inherit; font-size:14px; cursor:pointer; }
+  .editor .cancel { background:none; border:1px solid var(--line); color:var(--muted); padding:8px 16px; border-radius:6px; font-family:inherit; font-size:14px; cursor:pointer; }
+  .editor .hint { font-size:12px; color:var(--muted); margin-top:4px; }
+
   .week { background: var(--card); border: 1px solid var(--line); border-radius: 10px; margin-bottom: 16px; overflow: hidden; }
-  .week-head {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 16px; cursor: pointer; user-select: none;
-    border-bottom: 1px solid transparent;
-  }
+  .week-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; cursor: pointer; user-select: none; border-bottom: 1px solid transparent; }
   .week-head:hover { background: #faf9f7; }
   .week.open .week-head { border-bottom-color: var(--line); }
   .week-head .wk-title { font-weight: 600; }
@@ -94,7 +65,6 @@
   .week-body { display: none; padding: 6px 0; }
   .week.open .week-body { display: block; }
 
-  /* Task */
   .task { display: flex; align-items: flex-start; gap: 12px; padding: 10px 16px; border-top: 1px solid #f2f0ec; }
   .task:first-child { border-top: none; }
   .task input[type=checkbox] { margin-top: 3px; width: 17px; height: 17px; cursor: pointer; flex-shrink: 0; accent-color: var(--done); }
@@ -104,17 +74,14 @@
   .task .tag { font-size: 11px; padding: 1px 8px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); white-space: nowrap; }
   .task .txt { margin-top: 2px; }
   .task.done .txt { text-decoration: line-through; color: var(--muted); }
-  .task .gcal {
-    font-size: 12px; color: var(--gcal); text-decoration: none; white-space: nowrap;
-    border: 1px solid #d2e3fc; padding: 2px 8px; border-radius: 6px; margin-top: 4px; display: inline-block;
-  }
+  .task .gcal { font-size: 12px; color: var(--gcal); text-decoration: none; white-space: nowrap; border: 1px solid #d2e3fc; padding: 2px 8px; border-radius: 6px; margin-top: 4px; display: inline-block; margin-right:6px; }
   .task .gcal:hover { background: #f0f6ff; }
+  .task .rowact { font-size:12px; color:var(--muted); background:none; border:none; cursor:pointer; padding:2px 6px; margin-top:4px; font-family:inherit; }
+  .task .rowact:hover { color:var(--accent); text-decoration:underline; }
   .note { font-size: 12px; color: var(--muted); margin-top: 3px; }
 
   footer { max-width: 960px; margin: 0 auto; padding: 0 24px 40px; color: var(--muted); font-size: 13px; }
   .reset { background: none; border: 1px solid var(--line); color: var(--muted); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-family: inherit; font-size: 12px; }
-  .flag { background: #fdf6e3; border: 1px solid #f0e4c0; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 13px; }
-  .flag b { color: var(--accent); }
   .sync { font-size: 12px; padding: 3px 10px; border-radius: 12px; display: inline-block; margin-top: 6px; }
   .sync.ok { background: var(--done-soft); color: var(--done); }
   .sync.wait { background: #fff4e5; color: #a86b1f; }
@@ -125,348 +92,345 @@
 <body>
 <header>
   <h1>Wright Opera House — Social Media Tracker</h1>
-  <div class="sub">Jul 27 – Oct 25, 2026 &nbsp;·&nbsp; check items off, track metrics, drop dates into Google Calendar</div>
-  <span class="sync local" id="syncStatus">Local mode — not yet connected</span>
+  <div class="sub">Add, edit, and check off posts &nbsp;·&nbsp; shared with the whole team</div>
+  <span class="sync local" id="syncStatus">Connecting…</span>
 </header>
 
 <div class="wrap">
 
   <div class="metrics" id="metrics"></div>
 
-  <div class="flag">
-    <b>Two items still open:</b> Echoes in the Canyon screening date, and the wedding campaign booking goal. Fill those in and they'll slot into the timeline.
+  <button class="addbtn" id="addBtn">+ Add task</button>
+
+  <div class="editor" id="editor">
+    <h3 id="editorTitle">Add a task</h3>
+    <div class="grid">
+      <label for="fDate">Date</label>
+      <div><input type="date" id="fDate"><div class="hint">Leave blank for an undated / "someday" task.</div></div>
+      <label for="fTag">Campaign / program</label>
+      <div><input list="tagList" id="fTag" placeholder="Pick one or type a new program name"><datalist id="tagList"></datalist><div class="hint">Type a brand-new name (like a new show) to create a new campaign.</div></div>
+      <label for="fText">Task</label>
+      <input type="text" id="fText" placeholder="What's the post / to-do?">
+      <label for="fNote">Note (optional)</label>
+      <textarea id="fNote" placeholder="Anything extra"></textarea>
+    </div>
+    <div class="actions">
+      <button class="save" id="fSave">Save task</button>
+      <button class="cancel" id="fCancel">Cancel</button>
+    </div>
   </div>
 
   <div class="controls" id="controls"></div>
-
   <div id="weeks"></div>
 
 </div>
 
 <footer>
-  <p>Your checkmarks and metric entries save automatically when you open this file on your own computer. <button class="reset" onclick="resetAll()">Reset all progress</button></p>
+  <p>Everything syncs to the whole team automatically. <button class="reset" onclick="resetProgress()">Reset checkmarks &amp; metrics</button></p>
 </footer>
 
 <script>
-// ---------- METRIC DEFINITIONS ----------
-const METRICS = [
-  { id: 'likes',     label: 'Avg Likes / Post', start: 16, target: 25,   suffix: '', desc: 'toward 25' },
-  { id: 'shares',    label: 'Shares Gained',    start: 0,  target: 25,   suffix: '', desc: '+25 goal' },
-  { id: 'views',     label: 'Views (90-day)',   start: 36946, target: 47500, suffix: '', desc: 'toward ~47.5k' },
-  { id: 'followers', label: 'Followers',        start: 1877, target: 1957, suffix: '', desc: '+80 midpoint' },
-];
-
-// ---------- RECURRING DATE HELPERS ----------
-const START = new Date(2026, 6, 27); // Jul 27 2026 (Monday)
-const END   = new Date(2026, 9, 25); // Oct 25 2026 (Sunday)
-const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-const DOW = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-
-function fmt(d){ return DOW[d.getDay()] + ', ' + MONTHS[d.getMonth()] + ' ' + d.getDate(); }
-function gcalStr(d){ // YYYYMMDD
-  return d.getFullYear() + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0');
-}
-function gcalLink(d, title, details){
-  const start = gcalStr(d);
-  const end = new Date(d); end.setDate(end.getDate()+1);
-  const endStr = gcalStr(end);
-  const params = new URLSearchParams({
-    action: 'TEMPLATE', text: title, dates: start + '/' + endStr, details: details || ''
-  });
-  return 'https://calendar.google.com/calendar/render?' + params.toString();
-}
-function datesForDOW(dow){ // all dates of given day-of-week in range
-  const out = [];
-  let d = new Date(START);
-  while(d <= END){ if(d.getDay()===dow) out.push(new Date(d)); d.setDate(d.getDate()+1); }
-  return out;
-}
-function key(d){ return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
-
-// ---------- BUILD TASK LIST ----------
-let TASKS = [];
-let idc = 0;
-function add(dateObj, text, tag, note, gcal){
-  TASKS.push({
-    id: 'T'+(idc++),
-    date: dateObj,
-    sortKey: dateObj ? dateObj.getTime() : Infinity,
-    dateLabel: dateObj ? fmt(dateObj) : 'TBD',
-    text, tag, note: note||'',
-    gcal: (dateObj && gcal!==false) ? gcalLink(dateObj, text, note) : null
-  });
-}
-
-// Weekly: Wednesday movie night
-datesForDOW(3).forEach(d => add(d, 'Movie night reminder — post by 10am, cross-post to 2+ local FB groups', 'Weekly'));
-
-// Weekly: Thursday Letitia (alternating per plan)
-const letterDates = ['7-30','8-13','8-27','9-10','9-24','10-8','10-22'];
-datesForDOW(4).forEach(d => {
-  const k = (d.getMonth()+1)+'-'+d.getDate();
-  const isLetter = letterDates.includes(k);
-  add(d, 'Throwback Thursday — ' + (isLetter ? "Letitia's Letter (first-person historical voice)" : "Letitia's Voice (quote/story snippet)"), 'Weekly');
-});
-
-// Weekly: Sunday recap/gratitude (alternating)
-datesForDOW(0).forEach((d,i) => add(d, 'Sunday post — ' + (i%2===0 ? 'Recap: "what you missed this week"' : 'Gratitude post'), 'Weekly'));
-
-// Monthly: Tooting Our Own Horn (first Monday 9am)
-[[7,3],[8,7],[9,5]].forEach(([m,day]) => add(new Date(2026,m,day), 'Tooting Our Own Horn — text-only, 9am. Real Google review or Wright win, no photos', 'Monthly'));
-
-// Music Bingo B-roll
-add(new Date(2026,6,24), 'Music Bingo — Jake on-site for B-roll capture', 'Music Bingo', 'Cut into 1–2 short reels the following week');
-
-// Engagement Pod
-add(new Date(2026,6,27), 'Engagement Pod — recruit committee (Brooke, Beth/Chamber, Kate Jones, Sherbino, Alpenglow, school, Parks & Rec)', 'Eng. Pod');
-add(new Date(2026,7,3),  'Engagement Pod — shared posting schedule + Slack/text thread live', 'Eng. Pod');
-add(new Date(2026,8,25), 'Engagement Pod — pull reach/engagement data (boosted vs non-boosted); report at Aug board mtg', 'Eng. Pod');
-
-// LLL — daily-post week
-add(new Date(2026,6,27), "LLL — REHEARSAL SHOOT DAY 1: insults, physical comedy, character intro clips, battle-of-sexes setup", 'LLL', 'Main shoot window — capture everything Mon/Tue');
-add(new Date(2026,6,28), "LLL — REHEARSAL SHOOT DAY 2: finish capturing all reel/carousel footage", 'LLL');
-add(new Date(2026,6,29), 'LLL — "Battle of the sexes" teaser reel (day before opening)', 'LLL');
-add(new Date(2026,6,30), 'LLL — OPENING: "Swear off love, immediately fail" reel + opening-night Stories', 'LLL');
-add(new Date(2026,6,31), 'LLL — Shakespearean insults + modern translation carousel', 'LLL');
-add(new Date(2026,7,1),  'LLL — "Which character are you?" quiz carousel', 'LLL');
-add(new Date(2026,7,2),  'LLL — CLOSING: bloopers/rehearsal chaos reel + closing recap (doubles as Sunday recap)', 'LLL');
-
-// Edie — Aug 14
-add(new Date(2026,7,10), 'Edie — announce + ticket push (1–2 posts this week)', 'Edie / Pride', 'Cross-promote with Pride — Aug 14–15 is one "big weekend"');
-add(new Date(2026,7,13), 'Edie — countdown/teaser post (day before)', 'Edie / Pride');
-add(new Date(2026,7,14), 'Edie — ONE-NIGHT SHOWING: Story coverage during event', 'Edie / Pride');
-
-// Pride — Aug 15
-add(new Date(2026,7,15), 'Pride After-Party — Story coverage, live posting through event (connect Jake + Taylor for content)', 'Edie / Pride');
-add(new Date(2026,7,16), 'Pride/Edie — weekend recap post', 'Edie / Pride');
-
-// Echoes — TBD
-add(new Date(2026,6,27), 'Echoes in the Canyon — start local outreach for short interview clips (screening date TBD)', 'Echoes', 'Needs screening date to finish scheduling');
-
-// Sort
-TASKS.sort((a,b) => a.sortKey - b.sortKey);
-
-// ---------- STATE (localStorage w/ graceful fallback) ----------
-let state = { done: {}, metrics: {} };
-// ======================================================================
-//  SHARED SYNC — paste your Google Sheet Web App URL between the quotes
-//  below (see the setup guide). Leave it blank to run in local-only mode.
-// ======================================================================
+// ================== CONFIG: shared notebook ==================
 const SYNC_URL = "https://script.google.com/macros/s/AKfycbyqNaFMXLDNzPV04J3tjy7f2DUBsTDAIojzLX7O6WEQFkB8dyx4Q_hXLTjLodEGV50CZg/exec";
-// ======================================================================
-
+// =============================================================
 const syncOn = SYNC_URL.trim().length > 0;
 
-function setSync(txt, cls){
-  const el = document.getElementById('syncStatus');
-  if(el){ el.textContent = txt; el.className = 'sync ' + cls; }
+const METRICS = [
+  { id:'likes', label:'Avg Likes / Post', start:16, target:25, desc:'toward 25' },
+  { id:'shares', label:'Shares Gained', start:0, target:25, desc:'+25 goal' },
+  { id:'views', label:'Views (90-day)', start:36946, target:47500, desc:'toward ~47.5k' },
+  { id:'followers', label:'Followers', start:1877, target:1957, desc:'+80 midpoint' },
+];
+
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+// dates stored as "YYYY-MM-DD" strings (JSON-safe). Helpers:
+function parseISO(s){ if(!s) return null; const p=s.split('-'); return new Date(+p[0], +p[1]-1, +p[2]); }
+function toISO(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function fmt(d){ return DOW[d.getDay()]+', '+MONTHS[d.getMonth()]+' '+d.getDate(); }
+function gcalStr(d){ return d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0'); }
+function gcalLink(d, title, details){
+  const end=new Date(d); end.setDate(end.getDate()+1);
+  const params=new URLSearchParams({ action:'TEMPLATE', text:title, dates:gcalStr(d)+'/'+gcalStr(end), details:details||'' });
+  return 'https://calendar.google.com/calendar/render?'+params.toString();
 }
+
+// ---------- SEED (used only if the shared notebook has no tasks yet) ----------
+function buildSeed(){
+  const START=new Date(2026,6,27), END=new Date(2026,9,25);
+  const seed=[]; let i=0;
+  const push=(d,text,tag,note)=> seed.push({ id:'s'+(i++), date:d?toISO(d):'', tag, text, note:note||'' });
+  const dow=(n)=>{ const o=[]; let d=new Date(START); while(d<=END){ if(d.getDay()===n)o.push(new Date(d)); d.setDate(d.getDate()+1);} return o; };
+  dow(3).forEach(d=>push(d,'Movie night reminder — post by 10am, cross-post to 2+ local FB groups','Weekly'));
+  const letter=['7-30','8-13','8-27','9-10','9-24','10-8','10-22'];
+  dow(4).forEach(d=>{ const k=(d.getMonth()+1)+'-'+d.getDate(); const L=letter.includes(k);
+    push(d,'Throwback Thursday — '+(L?"Letitia's Letter (first-person historical voice)":"Letitia's Voice (quote/story snippet)"),'Weekly'); });
+  dow(0).forEach((d,n)=>push(d,'Sunday post — '+(n%2===0?'Recap: "what you missed this week"':'Gratitude post'),'Weekly'));
+  [[7,3],[8,7],[9,5]].forEach(([m,day])=>push(new Date(2026,m,day),'Tooting Our Own Horn — text-only, 9am. Real Google review or Wright win, no photos','Monthly'));
+  push(new Date(2026,6,24),'Music Bingo — Jake on-site for B-roll capture','Music Bingo','Cut into 1–2 short reels the following week');
+  push(new Date(2026,6,27),'Engagement Pod — recruit committee (Brooke, Beth/Chamber, Kate Jones, Sherbino, Alpenglow, school, Parks & Rec)','Eng. Pod');
+  push(new Date(2026,7,3),'Engagement Pod — shared posting schedule + Slack/text thread live','Eng. Pod');
+  push(new Date(2026,8,25),'Engagement Pod — pull reach/engagement data (boosted vs non-boosted); report at Aug board mtg','Eng. Pod');
+  push(new Date(2026,6,27),'LLL — REHEARSAL SHOOT DAY 1: insults, physical comedy, character intro clips, battle-of-sexes setup','LLL','Main shoot window — capture everything Mon/Tue');
+  push(new Date(2026,6,28),'LLL — REHEARSAL SHOOT DAY 2: finish capturing all reel/carousel footage','LLL');
+  push(new Date(2026,6,29),'LLL — "Battle of the sexes" teaser reel (day before opening)','LLL');
+  push(new Date(2026,6,30),'LLL — OPENING: "Swear off love, immediately fail" reel + opening-night Stories','LLL');
+  push(new Date(2026,6,31),'LLL — Shakespearean insults + modern translation carousel','LLL');
+  push(new Date(2026,7,1),'LLL — "Which character are you?" quiz carousel','LLL');
+  push(new Date(2026,7,2),'LLL — CLOSING: bloopers/rehearsal chaos reel + closing recap (doubles as Sunday recap)','LLL');
+  push(new Date(2026,7,10),'Edie — announce + ticket push (1–2 posts this week)','Edie / Pride','Cross-promote with Pride — Aug 14–15 is one "big weekend"');
+  push(new Date(2026,7,13),'Edie — countdown/teaser post (day before)','Edie / Pride');
+  push(new Date(2026,7,14),'Edie — ONE-NIGHT SHOWING: Story coverage during event','Edie / Pride');
+  push(new Date(2026,7,15),'Pride After-Party — Story coverage, live posting through event (connect Jake + Taylor for content)','Edie / Pride');
+  push(new Date(2026,7,16),'Pride/Edie — weekend recap post','Edie / Pride');
+  push(new Date(2026,6,27),'Echoes in the Canyon — start local outreach for short interview clips (screening date TBD)','Echoes','Needs screening date to finish scheduling');
+  loadWrightEventsIntoSeed(seed, i);
+  return seed;
+}
+
+// ---------- WRIGHT EVENTS (Aug–Nov, social promo) ----------
+const WRIGHT_EVENTS = [
+  { date:'2026-08-19', tag:'Movie',   text:'A League of Their Own — CO-150 screening' },
+  { date:'2026-08-26', tag:'Movie',   text:'Dumb and Dumber — CO-150 screening' },
+  { date:'2026-08-29', tag:'Music',   text:'San Juan Chamber Music Festival concert' },
+  { date:'2026-09-02', tag:'Movie',   text:'City Slickers — CO-150 screening' },
+  { date:'2026-09-04', tag:'Game',    text:'Trivia Night' },
+  { date:'2026-09-09', tag:'Movie',   text:'Echoes in the Canyon (Ouray documentary)' },
+  { date:'2026-09-10', tag:'Art',     text:'Art Reception — Thomas Livingstone, “Historic Treasures of the San Juan Mountains”' },
+  { date:'2026-09-11', tag:'Theatre', text:'Casey Skinner — “You Can’t Hide” (comedy)' },
+  { date:'2026-09-12', tag:'Art',     text:'Happy Little Trees — “Arizona Splendor”' },
+  { date:'2026-09-16', tag:'Movie',   text:'Echoes in the Canyon (Ouray documentary)' },
+  { date:'2026-09-18', tag:'Game',    text:'Music Bingo' },
+  { date:'2026-09-23', tag:'Movie',   text:'Echoes in the Canyon (Ouray documentary)' },
+  { date:'2026-09-30', tag:'Movie',   text:'Echoes in the Canyon (Ouray documentary)' },
+  { date:'2026-10-03', tag:'Art',     text:'Happy Little Trees — “Meadow Stream”' },
+  { date:'2026-10-07', tag:'Movie',   text:'A Monster Calls' },
+  { date:'2026-10-09', tag:'Game',    text:'Music Bingo' },
+  { date:'2026-10-14', tag:'Movie',   text:'If I Had Legs I’d Kick You' },
+  { date:'2026-10-21', tag:'Movie',   text:'Hoppers' },
+  { date:'2026-10-28', tag:'Movie',   text:'Weapons' },
+  { date:'2026-10-30', tag:'Movie',   text:'Minions and Monsters' },
+  { date:'2026-10-31', tag:'Special', text:'Trick or Treat: Witches at the Wright' },
+  { date:'2026-11-07', tag:'Art',     text:'Happy Little Trees — “Lonely”' },
+];
+function loadWrightEventsIntoSeed(seed, startIndex){
+  let i = startIndex;
+  WRIGHT_EVENTS.forEach(ev=>{
+    seed.push({ id:'e'+(i++), date:ev.date, tag:ev.tag, text:ev.text, note:'' });
+  });
+  return seed;
+}
+
+// ---------- STATE ----------
+let state = { tasks: [], done: {}, metrics: {} };
+let activeFilter = 'All';
+let editingId = null;   // null = not editing; 'NEW' = adding; else task id
+let formOpen = false;
+
+function setSync(txt, cls){ const el=document.getElementById('syncStatus'); if(el){ el.textContent=txt; el.className='sync '+cls; } }
 
 async function load(){
   if(syncOn){
     setSync('Connecting…','wait');
-    try {
-      const res = await fetch(SYNC_URL, { method:'GET' });
-      const data = await res.json();
-      state = { done: (data&&data.done)||{}, metrics: (data&&data.metrics)||{} };
-      try { localStorage.setItem('wright_tracker', JSON.stringify(state)); } catch(e){}
+    try{
+      const res=await fetch(SYNC_URL,{method:'GET'});
+      const data=await res.json();
+      state = {
+        tasks: (data&&Array.isArray(data.tasks))?data.tasks:[],
+        done: (data&&data.done)||{},
+        metrics: (data&&data.metrics)||{}
+      };
+      if(!state.tasks.length){ state.tasks = buildSeed(); saveNow(); }
+      try{ localStorage.setItem('wright_tracker', JSON.stringify(state)); }catch(e){}
       setSync('Synced — shared with the team','ok');
       return;
-    } catch(e){
-      setSync('Can\u2019t reach the shared sheet — using this device\u2019s copy','warn');
-    }
-  } else {
-    setSync('Local mode — checkmarks save on this device only','local');
-  }
-  try { const s = localStorage.getItem('wright_tracker'); if(s) state = JSON.parse(s); } catch(e){}
+    }catch(e){ setSync('Can’t reach the shared notebook — using this device’s copy','warn'); }
+  } else { setSync('Local mode — this device only','local'); }
+  try{ const s=localStorage.getItem('wright_tracker'); if(s) state=JSON.parse(s); }catch(e){}
+  if(!state.tasks || !state.tasks.length) state.tasks = buildSeed();
 }
 
-let saveTimer = null;
+let saveTimer=null;
 function save(){
-  try { localStorage.setItem('wright_tracker', JSON.stringify(state)); } catch(e){}
+  try{ localStorage.setItem('wright_tracker', JSON.stringify(state)); }catch(e){}
   if(!syncOn) return;
   clearTimeout(saveTimer);
   setSync('Saving…','wait');
-  saveTimer = setTimeout(async () => {
-    try {
-      await fetch(SYNC_URL, {
-        method:'POST',
-        headers:{ 'Content-Type':'text/plain;charset=utf-8' },
-        body: JSON.stringify(state)
-      });
-      setSync('Synced — shared with the team','ok');
-    } catch(e){
-      setSync('Save didn\u2019t reach the sheet — kept on this device','warn');
-    }
-  }, 500);
+  saveTimer=setTimeout(saveNow, 500);
 }
-
-// Pick up teammates' changes every 20s (skips while someone is typing a metric)
-async function poll(){
+async function saveNow(){
   if(!syncOn) return;
-  if(document.activeElement && document.activeElement.tagName === 'INPUT') return;
-  try {
-    const res = await fetch(SYNC_URL, { method:'GET' });
-    const data = await res.json();
-    const incoming = JSON.stringify({ done:(data&&data.done)||{}, metrics:(data&&data.metrics)||{} });
-    if(incoming !== JSON.stringify(state)){
-      state = JSON.parse(incoming);
-      try { localStorage.setItem('wright_tracker', JSON.stringify(state)); } catch(e){}
-      renderMetrics(); renderControls(); renderWeeks();
-      setSync('Synced — shared with the team','ok');
-    }
-  } catch(e){ /* stay quiet on background poll errors */ }
+  try{
+    await fetch(SYNC_URL,{ method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(state) });
+    setSync('Synced — shared with the team','ok');
+  }catch(e){ setSync('Save didn’t reach the notebook — kept on this device','warn'); }
 }
 
-// ---------- GROUP INTO WEEKS ----------
-function weekStart(d){ const x = new Date(d); const day = x.getDay(); const diff = (day===0?-6:1-day); x.setDate(x.getDate()+diff); x.setHours(0,0,0,0); return x; }
-const weekMap = {};
-TASKS.forEach(t => {
-  if(!t.date){ (weekMap['TBD'] = weekMap['TBD']||[]).push(t); return; }
-  const ws = weekStart(t.date);
-  const k = ws.getTime();
-  (weekMap[k] = weekMap[k]||[]).push(t);
-});
-const weekKeys = Object.keys(weekMap).filter(k=>k!=='TBD').sort((a,b)=>a-b);
+async function poll(){
+  if(!syncOn || formOpen) return;
+  if(document.activeElement && document.activeElement.tagName==='INPUT') return;
+  try{
+    const res=await fetch(SYNC_URL,{method:'GET'});
+    const data=await res.json();
+    const incoming=JSON.stringify({ tasks:(data&&data.tasks)||[], done:(data&&data.done)||{}, metrics:(data&&data.metrics)||{} });
+    if(incoming!==JSON.stringify(state)){
+      state=JSON.parse(incoming);
+      try{ localStorage.setItem('wright_tracker', JSON.stringify(state)); }catch(e){}
+      renderAll();
+      setSync('Synced — shared with the team','ok');
+    }
+  }catch(e){}
+}
 
-// ---------- FILTERS ----------
-const TAGS = ['All','Weekly','Monthly','LLL','Edie / Pride','Eng. Pod','Music Bingo','Echoes'];
-let activeFilter = 'All';
+// ---------- DERIVED ----------
+function tags(){ const s=new Set(); state.tasks.forEach(t=>{ if(t.tag) s.add(t.tag); }); return Array.from(s).sort(); }
+function weekStart(d){ const x=new Date(d); const day=x.getDay(); x.setDate(x.getDate()+(day===0?-6:1-day)); x.setHours(0,0,0,0); return x; }
+function taskMatches(t){ return activeFilter==='All' || t.tag===activeFilter; }
 
-// ---------- RENDER ----------
+// ---------- RENDER: metrics ----------
 function renderMetrics(){
-  const el = document.getElementById('metrics');
-  el.innerHTML = '';
-  METRICS.forEach(m => {
-    const cur = state.metrics[m.id] !== undefined ? state.metrics[m.id] : m.start;
-    const range = m.target - m.start;
-    const prog = range === 0 ? 0 : ((cur - m.start) / range) * 100;
-    const clamped = Math.max(0, Math.min(100, prog));
-    const hit = cur >= m.target;
-    const div = document.createElement('div');
-    div.className = 'metric';
-    div.innerHTML = `
-      <div class="label">${m.label}</div>
-      <div class="row">
-        <input type="number" value="${cur}" data-m="${m.id}">
-        <span class="target">/ ${m.target.toLocaleString()}</span>
-      </div>
+  const el=document.getElementById('metrics'); el.innerHTML='';
+  METRICS.forEach(m=>{
+    const cur = state.metrics[m.id]!==undefined ? state.metrics[m.id] : m.start;
+    const range=m.target-m.start; const prog=range===0?0:((cur-m.start)/range)*100;
+    const clamped=Math.max(0,Math.min(100,prog)); const hit=cur>=m.target;
+    const div=document.createElement('div'); div.className='metric';
+    div.innerHTML=`<div class="label">${m.label}</div>
+      <div class="row"><input type="number" value="${cur}" data-m="${m.id}"><span class="target">/ ${m.target.toLocaleString()}</span></div>
       <div class="bar"><div class="fill ${hit?'hit':''}" style="width:${clamped}%"></div></div>
-      <div class="pct">${hit ? '✓ Target hit' : Math.round(clamped)+'% there · '+m.desc}</div>
-    `;
+      <div class="pct">${hit?'✓ Target hit':Math.round(clamped)+'% there · '+m.desc}</div>`;
     el.appendChild(div);
   });
-  el.querySelectorAll('input').forEach(inp => {
-    inp.addEventListener('input', e => {
-      state.metrics[e.target.dataset.m] = parseFloat(e.target.value)||0;
-      save(); renderMetrics();
-    });
-  });
+  el.querySelectorAll('input').forEach(inp=>inp.addEventListener('input',e=>{
+    state.metrics[e.target.dataset.m]=parseFloat(e.target.value)||0; save(); renderMetrics();
+  }));
 }
 
+// ---------- RENDER: filters ----------
 function renderControls(){
-  const el = document.getElementById('controls');
-  el.innerHTML = '';
-  TAGS.forEach(tag => {
-    const b = document.createElement('button');
-    b.className = 'filter' + (tag===activeFilter?' active':'');
-    b.textContent = tag;
-    b.onclick = () => { activeFilter = tag; renderControls(); renderWeeks(); };
+  const el=document.getElementById('controls'); el.innerHTML='';
+  ['All', ...tags()].forEach(tag=>{
+    const b=document.createElement('button'); b.className='filter'+(tag===activeFilter?' active':''); b.textContent=tag;
+    b.onclick=()=>{ activeFilter=tag; renderControls(); renderWeeks(); };
     el.appendChild(b);
   });
-  const done = TASKS.filter(t=>state.done[t.id]).length;
-  const ov = document.createElement('div');
-  ov.className = 'overall';
-  ov.innerHTML = `<b>${done}</b> / ${TASKS.length} done overall`;
+  const done=state.tasks.filter(t=>state.done[t.id]).length;
+  const ov=document.createElement('div'); ov.className='overall'; ov.innerHTML=`<b>${done}</b> / ${state.tasks.length} done`;
   el.appendChild(ov);
 }
 
-function taskMatches(t){ return activeFilter==='All' || t.tag===activeFilter; }
-
+// ---------- RENDER: weeks + tasks ----------
 function renderWeeks(){
-  const container = document.getElementById('weeks');
-  container.innerHTML = '';
-  const allKeys = [...weekKeys];
-  if(weekMap['TBD']) allKeys.push('TBD');
+  const container=document.getElementById('weeks'); container.innerHTML='';
+  const shown=state.tasks.filter(taskMatches).map(t=>({ ...t, _d: parseISO(t.date) }));
+  shown.sort((a,b)=>{ const ka=a._d?a._d.getTime():Infinity, kb=b._d?b._d.getTime():Infinity; return ka-kb; });
 
-  allKeys.forEach((k, idx) => {
-    const tasks = weekMap[k].filter(taskMatches);
-    if(tasks.length === 0) return;
+  const groups={}; const order=[];
+  shown.forEach(t=>{
+    let k;
+    if(!t._d) k='TBD';
+    else k=weekStart(t._d).getTime();
+    if(!groups[k]){ groups[k]=[]; order.push(k); }
+    groups[k].push(t);
+  });
+  order.sort((a,b)=>{ if(a==='TBD')return 1; if(b==='TBD')return -1; return a-b; });
 
-    let title, sub;
-    if(k==='TBD'){ title = 'Undated'; sub = 'needs a date'; }
-    else {
-      const ws = new Date(parseInt(k));
-      const we = new Date(ws); we.setDate(we.getDate()+6);
-      title = 'Week of ' + MONTHS[ws.getMonth()] + ' ' + ws.getDate();
-      sub = MONTHS[ws.getMonth()]+' '+ws.getDate()+'–'+(we.getMonth()!==ws.getMonth()?MONTHS[we.getMonth()]+' ':'')+we.getDate();
-    }
-    const doneN = tasks.filter(t=>state.done[t.id]).length;
-    const pct = Math.round(doneN/tasks.length*100);
+  const today=new Date();
+  order.forEach((k,idx)=>{
+    const list=groups[k];
+    let title,sub;
+    if(k==='TBD'){ title='Undated'; sub='no date yet'; }
+    else{ const ws=new Date(k); const we=new Date(ws); we.setDate(we.getDate()+6);
+      title='Week of '+MONTHS[ws.getMonth()]+' '+ws.getDate();
+      sub=MONTHS[ws.getMonth()]+' '+ws.getDate()+'–'+(we.getMonth()!==ws.getMonth()?MONTHS[we.getMonth()]+' ':'')+we.getDate(); }
+    const doneN=list.filter(t=>state.done[t.id]).length; const pct=Math.round(doneN/list.length*100);
+    const isCurrent = k!=='TBD' && (()=>{ const ws=new Date(k); const we=new Date(ws); we.setDate(we.getDate()+7); return today>=ws&&today<we; })();
+    const open = isCurrent || idx<2;
 
-    // auto-open current & first incomplete-ish; default open first 2
-    const today = new Date();
-    const isCurrent = k!=='TBD' && (()=>{ const ws=new Date(parseInt(k)); const we=new Date(ws); we.setDate(we.getDate()+7); return today>=ws && today<we; })();
-    const open = isCurrent || idx < 2;
-
-    const wk = document.createElement('div');
-    wk.className = 'week' + (open?' open':'');
-    wk.innerHTML = `
-      <div class="week-head">
+    const wk=document.createElement('div'); wk.className='week'+(open?' open':'');
+    wk.innerHTML=`<div class="week-head">
         <div class="wk-title">${title}<span>${sub}</span></div>
-        <div class="wk-prog">
-          ${doneN}/${tasks.length}
-          <div class="mini-bar"><div class="mini-fill" style="width:${pct}%"></div></div>
-          <span class="chev">▶</span>
-        </div>
-      </div>
-      <div class="week-body"></div>
-    `;
-    const head = wk.querySelector('.week-head');
-    head.onclick = () => wk.classList.toggle('open');
-    const body = wk.querySelector('.week-body');
+        <div class="wk-prog">${doneN}/${list.length}<div class="mini-bar"><div class="mini-fill" style="width:${pct}%"></div></div><span class="chev">▶</span></div>
+      </div><div class="week-body"></div>`;
+    wk.querySelector('.week-head').onclick=()=>wk.classList.toggle('open');
+    const body=wk.querySelector('.week-body');
 
-    tasks.forEach(t => {
-      const done = !!state.done[t.id];
-      const row = document.createElement('div');
-      row.className = 'task' + (done?' done':'');
-      row.innerHTML = `
-        <input type="checkbox" ${done?'checked':''} data-id="${t.id}">
+    list.forEach(t=>{
+      const done=!!state.done[t.id];
+      const gcal = t._d ? gcalLink(t._d, t.text, t.note) : null;
+      const row=document.createElement('div'); row.className='task'+(done?' done':'');
+      row.innerHTML=`<input type="checkbox" ${done?'checked':''}>
         <div class="body">
-          <div class="t-top">
-            <span class="date">${t.dateLabel}</span>
-            <span class="tag">${t.tag}</span>
-          </div>
-          <div class="txt">${t.text}</div>
-          ${t.note?`<div class="note">${t.note}</div>`:''}
-          ${t.gcal?`<a class="gcal" href="${t.gcal}" target="_blank" rel="noopener">+ Add to Google Calendar</a>`:''}
-        </div>
-      `;
-      row.querySelector('input').addEventListener('change', e => {
-        state.done[t.id] = e.target.checked;
-        save();
-        renderControls();
-        renderWeeks();
-      });
+          <div class="t-top"><span class="date">${t._d?fmt(t._d):'No date'}</span><span class="tag">${t.tag||'—'}</span></div>
+          <div class="txt">${escapeHtml(t.text)}</div>
+          ${t.note?`<div class="note">${escapeHtml(t.note)}</div>`:''}
+          ${gcal?`<a class="gcal" href="${gcal}" target="_blank" rel="noopener">+ Google Calendar</a>`:''}
+          <button class="rowact act-edit">Edit</button>
+          <button class="rowact act-del">Delete</button>
+        </div>`;
+      row.querySelector('input').addEventListener('change',e=>{ state.done[t.id]=e.target.checked; save(); renderControls(); renderWeeks(); });
+      row.querySelector('.act-edit').addEventListener('click',()=>openEditor(t.id));
+      row.querySelector('.act-del').addEventListener('click',()=>deleteTask(t.id));
       body.appendChild(row);
     });
     container.appendChild(wk);
   });
+  if(order.length===0){ container.innerHTML='<p style="color:var(--muted);font-size:14px;">No tasks yet — hit “+ Add task” to start.</p>'; }
 }
 
-function resetAll(){
-  if(confirm('Clear all checkmarks and metric entries?')){
-    state = { done:{}, metrics:{} };
-    save();
-    renderMetrics(); renderControls(); renderWeeks();
-  }
+function escapeHtml(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+// ---------- EDITOR ----------
+function refreshTagList(){
+  const dl=document.getElementById('tagList'); dl.innerHTML='';
+  tags().forEach(t=>{ const o=document.createElement('option'); o.value=t; dl.appendChild(o); });
 }
+function openEditor(id){
+  editingId=id; formOpen=true;
+  const ed=document.getElementById('editor');
+  refreshTagList();
+  const title=document.getElementById('editorTitle');
+  const fDate=document.getElementById('fDate'), fTag=document.getElementById('fTag'), fText=document.getElementById('fText'), fNote=document.getElementById('fNote');
+  if(id==='NEW'){ title.textContent='Add a task'; fDate.value=''; fTag.value=(activeFilter!=='All'?activeFilter:''); fText.value=''; fNote.value=''; }
+  else { const t=state.tasks.find(x=>x.id===id); if(!t) return; title.textContent='Edit task'; fDate.value=t.date||''; fTag.value=t.tag||''; fText.value=t.text||''; fNote.value=t.note||''; }
+  ed.classList.add('open'); ed.scrollIntoView({behavior:'smooth',block:'center'}); fText.focus();
+}
+function closeEditor(){ editingId=null; formOpen=false; document.getElementById('editor').classList.remove('open'); }
+function saveEditor(){
+  const date=document.getElementById('fDate').value;
+  const tag=document.getElementById('fTag').value.trim();
+  const text=document.getElementById('fText').value.trim();
+  const note=document.getElementById('fNote').value.trim();
+  if(!text){ document.getElementById('fText').focus(); return; }
+  if(editingId==='NEW'){
+    state.tasks.push({ id:'u'+Date.now()+Math.floor(Math.random()*1000), date, tag: tag||'General', text, note });
+  } else {
+    const t=state.tasks.find(x=>x.id===editingId); if(t){ t.date=date; t.tag=tag||'General'; t.text=text; t.note=note; }
+  }
+  closeEditor(); save(); renderAll();
+}
+function deleteTask(id){
+  const t=state.tasks.find(x=>x.id===id); if(!t) return;
+  if(!confirm('Delete this task?\n\n“'+t.text+'”')) return;
+  state.tasks=state.tasks.filter(x=>x.id!==id); delete state.done[id];
+  save(); renderAll();
+}
+
+function resetProgress(){
+  if(!confirm('Clear all checkmarks and metric numbers? (Your tasks stay.)')) return;
+  state.done={}; state.metrics={}; save(); renderAll();
+}
+
+function renderAll(){ renderMetrics(); renderControls(); renderWeeks(); }
+
+document.getElementById('addBtn').addEventListener('click',()=>openEditor('NEW'));
+document.getElementById('fSave').addEventListener('click',saveEditor);
+document.getElementById('fCancel').addEventListener('click',closeEditor);
 
 (async function init(){
   await load();
-  renderMetrics();
-  renderControls();
-  renderWeeks();
+  renderAll();
   if(syncOn) setInterval(poll, 20000);
 })();
 </script>
